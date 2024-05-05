@@ -88,16 +88,16 @@ export default {
           'Content-Type': 'multipart/form-data'
         }
       }
-      // try {
-      //   const result = await axios.post('register.php',this.auth, cfg );
-      //   if (result.status === 200) {
-      //     this.successToast();
-      //     this.$router.push('auth/login');
-      //   }
-      // } catch (e) {
-      //   console.error(e.message);
-      //   this.errorToast();
-      // }
+      try {
+        const result = await axios.post('register.php',this.auth, cfg );
+        if (result.status === 200) {
+          this.successToast();
+          this.$router.push('auth/login');
+        }
+      } catch (e) {
+        console.error(e.message);
+        this.errorToast();
+      }
     }
   },
   async mounted() {

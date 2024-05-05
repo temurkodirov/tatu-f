@@ -21,7 +21,7 @@ export default {
 
     <ul class="menu-inner py-1">
       <!-- Dashboard -->
-      <li class="menu-item active">
+      <li class="menu-item" :class="this.$route.name === 'dashboard' ? 'active':''">
         <a href="index.html" class="menu-link">
           <i class="menu-icon tf-icons bx bx-home-circle"></i>
           <div data-i18n="Analytics">Dashboard</div>
@@ -29,7 +29,7 @@ export default {
       </li>
 
       <!-- Layouts -->
-      <li class="menu-item">
+      <li class="menu-item" :class="this.$route.name === 'rooms' ? 'active':''">
         <router-link to="/rooms"  class="menu-link menu-toggle">
           <i class="menu-icon tf-icons bx bx-layout"></i>
           <div data-i18n="Layouts">Xonalar</div>

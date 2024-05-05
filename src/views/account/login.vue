@@ -3,6 +3,7 @@ import {email, helpers, maxLength, minLength, required} from "@vuelidate/validat
 import useVuelidate from "@vuelidate/core";
 import {useToast} from "vue-toastification";
 import axios from "axios";
+import {mapActions} from "vuex";
 
 export default {
   name: "login",
@@ -35,7 +36,9 @@ export default {
         rtl: false
       });
     },
+
     async loginFunction() {
+
       this.v$.user.$touch();
       if (this.v$.user.$invalid) {
         window.scrollTo({
@@ -50,17 +53,29 @@ export default {
         }
       }
       try {
-        const result = await axios.post('login', this.user, cfg)
+        const result = await axios.post('login', this.user, cfg);
         if (result.data.status === true) {
-          localStorage.setItem('token', result.data.token);
-          console.log(result.data);
+          const getUser = await axios.get(`https://zoyirbek.pro/api/odamlar.php?login=${this.user.login}&token=${result.data.token}`);
+          if (getUser.status === 200) {
+            const lokalUser = {
+              id: getUser.data.data.id,
+              ism: getUser.data.data.ism,
+              familiya: getUser.data.data.familiya,
+              kasblar_id: getUser.data.data.kasblar_id,
+              login: getUser.data.data.login,
+              token: getUser.data.data.token
+            };
+            localStorage.setItem('lokalUser', JSON.stringify(lokalUser));
+            this.$router.push('/')
+          }
         } else {
           this.errorToast();
         }
       } catch (e) {
         this.errorToast();
-        console.error(e.message)
+        console.error(e.message);
       }
+
     }
   },
   validations: {

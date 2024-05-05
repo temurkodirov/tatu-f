@@ -12,6 +12,12 @@ export default [
                 path: "rooms",
                 name: "rooms",
                 component: () => import("@/views/rooms/rooms.vue")
+            },
+            {
+                path: "room/details/:seoXonaId",
+                props: true,
+                name: "roomDetails",
+                component: () => import("@/views/rooms/roomDetails.vue")
             }
         ],
         redirect: '/dashboard'

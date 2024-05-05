@@ -7,6 +7,7 @@ export default {
   name: "rooms",
   data() {
     return {
+      lokalUser: '',
       addRoom:{
         nomi: "",
         raqami: 0,
@@ -18,30 +19,67 @@ export default {
   },
   methods: {
     async getRooms() {
+      this.roomList = []
       try {
-        const result = await axios.get('honalar?token=6c54440c5ac158dbdac78f028cbb4aca', );
+        const result = await axios.get('honalar?token='+ this.lokalUser.token);
         if (result.status === 200) {
-          console.log(result.data.data)
           this.roomList = result.data.data
+          console.log(this.roomList)
         }
       }catch (e) {
         console.error(e.message)
       }
     },
     async createRoom() {
+      this.addRoom.user_id = Number(this.lokalUser.id);
+      const cfg = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
       try {
-        const result = await axios.post('honalar');
-        if (result.status === 200) {
+        const result = await axios.post('honalar.php?token='+ this.lokalUser.token, this.addRoom, cfg);
+        if (result.data.status) {
+          await this.getRooms();
           this.createRoomToast();
+        } else {
+          this.errorToast();
         }
       } catch (e) {
         this.errorToast();
         console.error(e.message)
       }
-
+    },
+    async deleteRoom(honaId) {
+      try {
+        const result = await axios.get('delete?honalar&id=' + honaId +'&token='+ this.lokalUser.token);
+        if (result.data.status) {
+          await this.getRooms();
+          this.successRoomToast();
+        }
+      } catch (e) {
+        this.errorToast();
+        console.error(e.message)
+      }
     },
     createRoomToast() {
       this.toast.success("Xona muvaffaqiyatli yaratildi", {
+        position: "top-right",
+        timeout: 1800,
+        closeOnClick: true,
+        pauseOnFocusLoss: true,
+        pauseOnHover: true,
+        draggable: true,
+        draggablePercent: 0.6,
+        showCloseButtonOnHover: false,
+        hideProgressBar: false,
+        closeButton: "button",
+        icon: true,
+        rtl: false
+      });
+    },
+    successRoomToast() {
+      this.toast.success(" muvaffaqiyatli bajarildi", {
         position: "top-right",
         timeout: 1800,
         closeOnClick: true,
@@ -79,7 +117,8 @@ export default {
     return {v$, toast}
   },
   async mounted() {
-  await this.getRooms();
+    this.lokalUser = JSON.parse(localStorage.getItem('lokalUser'));
+    await this.getRooms();
   }
 }
 </script>
@@ -95,7 +134,7 @@ export default {
         <!-- Bordered Table -->
         <div class="card">
           <div class="card-header d-flex justify-content-between">
-            <h5 class="">Bordered Table</h5>
+            <h5 class="">Xonalar</h5>
             <button type="button" class=" btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoomModal">
               Xona qo'shish  </button>
           </div>
@@ -111,15 +150,15 @@ export default {
                 </div>
                 <div class="modal-body">
                   <label> Xona nomi </label>
-                  <input v-model="addRoom.nomi" type="number" class="form-control">
+                  <input v-model="addRoom.nomi" type="text" class="form-control">
                   <label> Xona Raqami </label>
-                  <input v-model="addRoom.raqami" type="text" class="form-control">
+                  <input v-model="addRoom.raqami" type="number" class="form-control">
                   <label> Masul shaxslar </label>
                   <input v-model="addRoom.masul_shaxs" type="text" class="form-control">
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-                  <button type="button" class="btn btn-primary">Saqlash</button>
+                  <button @click="createRoom" type="button" class="btn btn-primary" data-bs-dismiss="modal">Saqlash</button>
                 </div>
               </div>
             </div>
@@ -132,30 +171,48 @@ export default {
                 <tr>
                   <th>Xona nomi</th>
                   <th>Xona raqami</th>
-                  <th>Jihozlar soni</th>
+                  <th>Maxsus shaxslar</th>
                   <th>Tahrirlash</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
+                <tr v-for="(room, index) in roomList" :key="index">
+                  <td>  <router-link :to="{name: 'roomDetails', params: {seoXonaId: room.id}}"
+                                     class="text-decoration-underline">
+                    {{ room.nomi }} </router-link> </td>
+                  <td>{{ room.raqami }}</td>
+                  <td>{{ room.masul_shaxs }}</td>
+                  <td>
+                    <button class="badge badge-center bg-warning btn me-3">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button class="btn badge badge-center bg-danger" data-bs-toggle="modal" :data-bs-target="'#roomDeleteModal_' + index">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
 
-                  <td>Kampyuter xona </td>
-                  <td>
-                    103
-                  </td>
-                  <td>
-                    109
-                  </td>
-                  <td>
-                    <button class="badge badge-center bg-warning btn me-3"> <i class="fa-solid fa-pen-to-square"></i></button>
-                    <button class="btn badge badge-center bg-danger"> <i class="fa-solid fa-trash"></i></button>
+                    <!-- Modal -->
+                    <div class="modal fade" :id="'roomDeleteModal_' + index" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" :aria-labelledby="'roomDeleteModalLabel_' + index" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" :id="'roomDeleteModalLabel_' + index">Xona O'chirish</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <h4> {{ room.nomi }} ni xonani o'chirishni xoxlaysizmi?</h4>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yo'q</button>
+                            <button type="button" class="btn btn-primary" @click="deleteRoom(room.id)" data-bs-dismiss="modal">Ha</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </td>
                 </tr>
-
-
-
                 </tbody>
               </table>
+
             </div>
           </div>
         </div>
