@@ -7,14 +7,11 @@ export default {
 <template>
   <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
-      <a href="index.html" class="app-brand-link">
+      <router-link to="/"  class="app-brand-link">
 
-        <span class="app-brand-text demo menu-text fw-bolder ms-2">Sneat</span>
-      </a>
+      <span class="app-brand-text demo menu-text fw-bolder ms-2">Sneat</span>
+      </router-link>
 
-      <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
-        <i class="bx bx-chevron-left bx-sm align-middle"></i>
-      </a>
     </div>
 
     <div class="menu-inner-shadow"></div>
@@ -22,10 +19,10 @@ export default {
     <ul class="menu-inner py-1">
       <!-- Dashboard -->
       <li class="menu-item" :class="this.$route.name === 'dashboard' ? 'active':''">
-        <a href="index.html" class="menu-link">
+        <router-link to="/" class="menu-link">
           <i class="menu-icon tf-icons bx bx-home-circle"></i>
           <div data-i18n="Analytics">Dashboard</div>
-        </a>
+        </router-link>
       </li>
 
       <!-- Layouts -->
@@ -35,7 +32,12 @@ export default {
           <div data-i18n="Layouts">Xonalar</div>
         </router-link>
       </li>
-
+      <li class="menu-item" :class="this.$route.name === 'furniture' ? 'active':''">
+        <router-link to="/furniture"  class="menu-link menu-toggle">
+          <i class="menu-icon tf-icons bx bx-layout"></i>
+          <div data-i18n="Layouts">Jihozlar</div>
+        </router-link>
+      </li>
       <li class="menu-header small text-uppercase">
         <span class="menu-header-text">Pages</span>
       </li>

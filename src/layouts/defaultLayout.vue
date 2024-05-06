@@ -6,6 +6,18 @@ import Navbar from "@/components/navbar/navbar.vue";
 export default {
   name: "defaultLayout",
   components: {Navbar, Sidebard},
+  methods: {
+    getUser() {
+      let user = localStorage.getItem('lokalUser')
+      if(user === null) {
+        this.$router.push('/auth/login')
+      }
+      console.log(user)
+    }
+  },
+  mounted() {
+    this.getUser();
+  }
 }
 </script>
 

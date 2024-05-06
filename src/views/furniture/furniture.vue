@@ -4,55 +4,38 @@ import useVuelidate from "@vuelidate/core";
 import {useToast} from "vue-toastification";
 
 export default {
-  name: "roomDetails",
-  props: ['seoXonaId'],
+  name: "furniture",
   data() {
     return {
-      lokalUser: '',
-      addRoom:{
-        nomi: "",
-        raqami: 0,
-        user_id: 0,
-        masul_shaxs: ""
+      furniture : {
+        jihoz_nomi: '',
+        soni: 0
       },
-      roomFurnitureList: [],
-      roomData : {
-        id: '0', user_id: '0', masul_shaxs: '0', raqami: '0', nomi: '0'
-      }
+      furnitureList: []
     }
   },
   methods: {
     async getRooms() {
+      this.furnitureList = []
       try {
-        const result = await axios.get('honalar?id='+ this.seoXonaId +'&token='+ this.lokalUser.token);
+        const result = await axios.get('ombor.php?token='+ this.lokalUser.token);
         if (result.status === 200) {
-          this.roomData = result.data.data
+          this.furnitureList = result.data.data;
+          console.log(result.data)
         }
       }catch (e) {
         console.error(e.message)
       }
     },
-    async getFurnitureRoom() {
-      this.roomFurnitureList = []
-      try {
-        const result = await axios.get('hona_jihozlari.php?hona_id='+ this.seoXonaId +'&token='+ this.lokalUser.token);
-        if (result.status === 200) {
-          this.roomFurnitureList = result.data.data
-          console.log(result.data)
-        }
-      } catch (e) {
-        console.error(e.message)
-      }
-    },
-    async createRoom() {
-      this.addRoom.user_id = Number(this.lokalUser.id);
+    async createFurniture() {
+
       const cfg = {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       }
       try {
-        const result = await axios.post('honalar.php?token='+ this.lokalUser.token, this.addRoom, cfg);
+        const result = await axios.post('ombor.php?token='+ this.lokalUser.token, this.furniture, cfg);
         if (result.data.status) {
           await this.getRooms();
           this.createRoomToast();
@@ -133,9 +116,7 @@ export default {
   async mounted() {
     this.lokalUser = JSON.parse(localStorage.getItem('lokalUser'));
     await this.getRooms();
-    await this.getFurnitureRoom();
   }
-
 }
 </script>
 
@@ -144,13 +125,13 @@ export default {
     <!-- Content -->
 
     <div class="container-xxl flex-grow-1 container-p-y">
-      <h4 class="fw-bold py-3 mb-4"> Xona nomi: {{roomData.nomi}} ||  Raqami: {{roomData.raqami}} || Masul shaxs: {{roomData.masul_shaxs}} </h4>
+      <h4 class="fw-bold py-3 mb-4"> Xonalar </h4>
 
       <!-- Basic Bootstrap Table -->
       <!-- Bordered Table -->
       <div class="card">
         <div class="card-header d-flex justify-content-between">
-          <h5 class="">Xona jihozlari</h5>
+          <h5 class="">Xonalar</h5>
           <button type="button" class=" btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoomModal">
             Xona qo'shish  </button>
         </div>
@@ -165,16 +146,14 @@ export default {
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <label> Xona nomi </label>
-                <input v-model="addRoom.nomi" type="text" class="form-control">
-                <label> Xona Raqami </label>
-                <input v-model="addRoom.raqami" type="number" class="form-control">
-                <label> Masul shaxslar </label>
-                <input v-model="addRoom.masul_shaxs" type="text" class="form-control">
+                <label> Jihoz nomi </label>
+                <input v-model="furniture.jihoz_nomi" type="text" class="form-control">
+                <label> Soni </label>
+                <input v-model="furniture.soni" type="number" class="form-control">
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-                <button @click="createRoom" type="button" class="btn btn-primary" data-bs-dismiss="modal">Saqlash</button>
+                <button @click="createFurniture" type="button" class="btn btn-primary" data-bs-dismiss="modal">Saqlash</button>
               </div>
             </div>
           </div>
@@ -187,17 +166,13 @@ export default {
               <tr>
                 <th>Xona nomi</th>
                 <th>Xona raqami</th>
-                <th>Maxsus shaxslar</th>
                 <th>Tahrirlash</th>
               </tr>
               </thead>
               <tbody>
-              <tr v-for="(room, index) in roomList" :key="index">
-                <td>  <router-link :to="{name: 'roomDetails', params: {seoXonaId: room.id}}"
-                                   class="text-decoration-underline">
-                  {{ room.nomi }} </router-link> </td>
-                <td>{{ room.raqami }}</td>
-                <td>{{ room.masul_shaxs }}</td>
+              <tr v-for="(room, index) in furnitureList" :key="index">
+                <td>  {{ room.jihoz_nomi }} </td>
+                <td>{{ room.soni }}</td>
                 <td>
                   <button class="badge badge-center bg-warning btn me-3">
                     <i class="fa-solid fa-pen-to-square"></i>
@@ -215,7 +190,7 @@ export default {
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                          <h4> {{ room.nomi }} ni xonani o'chirishni xoxlaysizmi?</h4>
+                          <h4> {{ room.jihoz_nomi }} ni xonani o'chirishni xoxlaysizmi?</h4>
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yo'q</button>

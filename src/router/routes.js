@@ -18,7 +18,12 @@ export default [
                 props: true,
                 name: "roomDetails",
                 component: () => import("@/views/rooms/roomDetails.vue")
-            }
+            },
+            {
+                path: "furniture",
+                name: "furniture",
+                component: () => import("@/views/furniture/furniture.vue")
+            },
         ],
         redirect: '/dashboard'
     },
