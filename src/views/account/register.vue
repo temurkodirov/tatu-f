@@ -92,7 +92,7 @@ export default {
         const result = await axios.post('register.php',this.auth, cfg );
         if (result.status === 200) {
           this.successToast();
-          this.$router.push('auth/login');
+          this.$router.push('/auth/login');
         }
       } catch (e) {
         console.error(e.message);

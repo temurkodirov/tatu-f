@@ -24,6 +24,21 @@ export default [
                 name: "furniture",
                 component: () => import("@/views/furniture/furniture.vue")
             },
+            {
+                path: "orders",
+                name: "orders",
+                component: () => import("@/views/order/orders.vue")
+            },
+            {
+                path: "orders-accountant",
+                name: "ordersAccountant",
+                component: () => import("@/views/order/ordersAccountant.vue")
+            },
+            {
+                path: "orders-warehouse",
+                name: "ordersWarehouse",
+                component: () => import("@/views/order/ordersWarehouse.vue")
+            },
         ],
         redirect: '/dashboard'
     },

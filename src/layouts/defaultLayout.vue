@@ -12,7 +12,6 @@ export default {
       if(user === null) {
         this.$router.push('/auth/login')
       }
-      console.log(user)
     }
   },
   mounted() {

@@ -1,6 +1,22 @@
 <script>
 export default {
-  name: "sidebard"
+  name: "sidebard",
+  data() {
+    return{
+    lokalUser: {
+      id: "0",
+      ism: "",
+      familiya: "",
+      kasblar_id: "",
+      login: "",
+      token: ""
+    },
+    }
+  },
+  mounted() {
+    let storage = JSON.parse(localStorage.getItem('lokalUser'));
+    this.lokalUser = storage;
+  }
 }
 </script>
 
@@ -26,16 +42,34 @@ export default {
       </li>
 
       <!-- Layouts -->
-      <li class="menu-item" :class="this.$route.name === 'rooms' ? 'active':''">
+      <li v-if="lokalUser.kasblar_id == '1'" class="menu-item" :class="this.$route.name === 'rooms' ? 'active':''">
         <router-link to="/rooms"  class="menu-link menu-toggle">
           <i class="menu-icon tf-icons bx bx-layout"></i>
           <div data-i18n="Layouts">Xonalar</div>
         </router-link>
       </li>
-      <li class="menu-item" :class="this.$route.name === 'furniture' ? 'active':''">
+      <li v-if="lokalUser.kasblar_id != '1'" class="menu-item" :class="this.$route.name === 'furniture' ? 'active':''">
         <router-link to="/furniture"  class="menu-link menu-toggle">
           <i class="menu-icon tf-icons bx bx-layout"></i>
           <div data-i18n="Layouts">Jihozlar</div>
+        </router-link>
+      </li>
+      <li v-if="lokalUser.kasblar_id == '1'" class="menu-item" :class="this.$route.name === 'orders' ? 'active':''">
+        <router-link to="/orders"  class="menu-link menu-toggle">
+          <i class="menu-icon tf-icons bx bx-layout"></i>
+          <div data-i18n="Layouts">Buyurtmalar</div>
+        </router-link>
+      </li>
+      <li v-if="lokalUser.kasblar_id == '2'" class="menu-item" :class="this.$route.name === 'ordersAccountant' ? 'active':''">
+        <router-link to="/orders-accountant"  class="menu-link menu-toggle">
+          <i class="menu-icon tf-icons bx bx-layout"></i>
+          <div data-i18n="Layouts">Buyurtmalar</div>
+        </router-link>
+      </li>
+      <li class="menu-item" :class="this.$route.name === 'ordersWarehouse' ? 'active':''">
+        <router-link to="/orders-warehouse"  class="menu-link menu-toggle">
+          <i class="menu-icon tf-icons bx bx-layout"></i>
+          <div data-i18n="Layouts">Buyurtmalar</div>
         </router-link>
       </li>
       <li class="menu-header small text-uppercase">

@@ -183,9 +183,7 @@ export default {
                   <td>{{ room.raqami }}</td>
                   <td>{{ room.masul_shaxs }}</td>
                   <td>
-                    <button class="badge badge-center bg-warning btn me-3">
-                      <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
+
                     <button class="btn badge badge-center bg-danger" data-bs-toggle="modal" :data-bs-target="'#roomDeleteModal_' + index">
                       <i class="fa-solid fa-trash"></i>
                     </button>

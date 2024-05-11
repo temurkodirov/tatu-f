@@ -15,10 +15,17 @@ export default {
         user_id: 0,
         masul_shaxs: ""
       },
+      buyurtma: {
+        hona_id: 0,
+        jihoz_id: 0,
+        soni: 0
+      },
+      jihoz: null,
       roomFurnitureList: [],
       roomData : {
         id: '0', user_id: '0', masul_shaxs: '0', raqami: '0', nomi: '0'
-      }
+      },
+      furnitureList: []
     }
   },
   methods: {
@@ -32,13 +39,27 @@ export default {
         console.error(e.message)
       }
     },
+    async getFurnituresList() {
+      this.furnitureList = []
+      try {
+        const result = await axios.get('ombor.php?token='+ this.lokalUser.token);
+        if (result.status === 200) {
+          this.furnitureList = result.data.data;
+          this.jihoz = this.furnitureList.length > 0 ? this.furnitureList[0].id : null
+          console.log('furnitures: ',result.data)
+        }
+      }catch (e) {
+        console.error(e.message)
+      }
+    },
     async getFurnitureRoom() {
       this.roomFurnitureList = []
       try {
-        const result = await axios.get('hona_jihozlari.php?hona_id='+ this.seoXonaId +'&token='+ this.lokalUser.token);
-        if (result.status === 200) {
+        const result = await axios.get('hona_jihozlari.php?' +'token='+ this.lokalUser.token + '&hona_id='+this.seoXonaId);
           this.roomFurnitureList = result.data.data
-          console.log(result.data)
+          console.log('honaga jihozlar', this.roomFurnitureList)
+        if (result.status === 200) {
+
         }
       } catch (e) {
         console.error(e.message)
@@ -73,6 +94,24 @@ export default {
         }
       } catch (e) {
         this.errorToast();
+        console.error(e.message)
+      }
+    },
+    async createBuyurtma() {
+      const cfg = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+      this.buyurtma.hona_id = Number(this.seoXonaId)
+      try {
+        const result = await axios.post('buyurtmalar.php?token='+ this.lokalUser.token, this.buyurtma, cfg);
+        if (result.data.status) {
+          this.successRoomToast();
+        } else {
+          this.errorToast();
+        }
+      } catch (e) {
         console.error(e.message)
       }
     },
@@ -134,6 +173,7 @@ export default {
     this.lokalUser = JSON.parse(localStorage.getItem('lokalUser'));
     await this.getRooms();
     await this.getFurnitureRoom();
+    await this.getFurnituresList();
   }
 
 }
@@ -152,7 +192,7 @@ export default {
         <div class="card-header d-flex justify-content-between">
           <h5 class="">Xona jihozlari</h5>
           <button type="button" class=" btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoomModal">
-            Xona qo'shish  </button>
+            Xona jihoz qo'shish  </button>
         </div>
         <!--    add room modal-->
 
@@ -165,16 +205,19 @@ export default {
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <label> Xona nomi </label>
-                <input v-model="addRoom.nomi" type="text" class="form-control">
-                <label> Xona Raqami </label>
-                <input v-model="addRoom.raqami" type="number" class="form-control">
-                <label> Masul shaxslar </label>
-                <input v-model="addRoom.masul_shaxs" type="text" class="form-control">
+                <label> Jihozni tanlang </label>
+                <select class="select2 form-select" v-model="buyurtma.jihoz_id">
+                  <option v-for="(item, index) in furnitureList" :key="index" :value="item.id"
+                          :selected="index === 0">{{ item.jihoz_nomi }}</option>
+                </select>
+
+                <label> Sonini kiriting </label>
+                <input v-model="buyurtma.soni" type="number" class="form-control">
+
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-                <button @click="createRoom" type="button" class="btn btn-primary" data-bs-dismiss="modal">Saqlash</button>
+                <button @click="createBuyurtma" type="button" class="btn btn-primary" data-bs-dismiss="modal">Saqlash</button>
               </div>
             </div>
           </div>
@@ -192,11 +235,10 @@ export default {
               </tr>
               </thead>
               <tbody>
-              <tr v-for="(room, index) in roomList" :key="index">
-                <td>  <router-link :to="{name: 'roomDetails', params: {seoXonaId: room.id}}"
-                                   class="text-decoration-underline">
-                  {{ room.nomi }} </router-link> </td>
-                <td>{{ room.raqami }}</td>
+              <tr v-for="(room, index) in roomFurnitureList" :key="index">
+                <td> {{room.jihoz_nomi}}   </td>
+
+                <td>{{ room.buyutma_soni }}</td>
                 <td>{{ room.masul_shaxs }}</td>
                 <td>
                   <button class="badge badge-center bg-warning btn me-3">
