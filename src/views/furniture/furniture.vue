@@ -40,6 +40,10 @@ export default {
         if (result.data.status) {
           await this.getRooms();
           this.createRoomToast();
+          this.furniture = {
+            jihoz_nomi: '',
+            soni: 0
+          }
         } else {
           this.errorToast();
         }

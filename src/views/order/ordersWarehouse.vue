@@ -109,7 +109,7 @@ export default {
         }
       }
       try {
-        let result = await axios.get('buyurtma_close?token='+this.lokalUser.token,{id : room.id},cfg);
+        let result = await axios.post('buyurtma_close?token='+this.lokalUser.token,{id : room.id},cfg);
         if (result.data.status === true) {
           this.successRoomToast();
           this.toggleOkayModal(null);
@@ -259,8 +259,8 @@ export default {
                   <span v-if="room.holati === '3'"> Bekor qilindi </span>
                 </td>
                 <td v-if="room.holati === '1'">
-                  <button  class="bg-success btn me-3 btn-sm" style="color: white"  @click="toggleOkayModal(room)" >
-                    kafedraga jo'natish  </button>
+                  <button v-if="lokalUser.kasblar_id === '3'"  class="bg-success btn me-3 btn-sm" style="color: white"  @click="toggleOkayModal(room)" >
+                    Kafedraga jo'natish  </button>
 
                   <!-- Okay modal -->
                   <div class="modal fade "

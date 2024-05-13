@@ -42,6 +42,12 @@ export default {
         if (result.data.status) {
           await this.getRooms();
           this.createRoomToast();
+          this.addRoom = {
+            nomi: "",
+            raqami: 0,
+            user_id: 0,
+            masul_shaxs: ""
+          }
         } else {
           this.errorToast();
         }

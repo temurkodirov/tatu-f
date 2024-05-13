@@ -66,14 +66,11 @@ export default {
           <div data-i18n="Layouts">Buyurtmalar</div>
         </router-link>
       </li>
-      <li class="menu-item" :class="this.$route.name === 'ordersWarehouse' ? 'active':''">
+      <li v-if="lokalUser.kasblar_id != '1'" class="menu-item" :class="this.$route.name === 'ordersWarehouse' ? 'active':''">
         <router-link to="/orders-warehouse"  class="menu-link menu-toggle">
           <i class="menu-icon tf-icons bx bx-layout"></i>
           <div data-i18n="Layouts">Buyurtmalar</div>
         </router-link>
-      </li>
-      <li class="menu-header small text-uppercase">
-        <span class="menu-header-text">Pages</span>
       </li>
 
     </ul>
