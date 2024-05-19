@@ -87,9 +87,9 @@ export default {
     },
     async deleteRoom(honaId) {
       try {
-        const result = await axios.get('delete?honalar&id=' + honaId +'&token='+ this.lokalUser.token);
+        const result = await axios.get('delete?hona_jihozlari&id=' + honaId +'&token='+ this.lokalUser.token);
         if (result.data.status) {
-          await this.getRooms();
+          await this.getFurnitureRoom();
           this.successRoomToast();
         }
       } catch (e) {
